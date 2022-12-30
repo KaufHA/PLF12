@@ -1,0 +1,31 @@
+# this file contains anything that needs to be changed for PLF12 relative to PLF10.
+
+substitutions:
+  project_name: Kauf.PLF12
+
+  # power monitoring configuration
+  voltage_divider_val:  "2001"
+  sub_hlw_model:         BL0937
+  power_cal_val2_in:    "879.4"
+  power_cal_val2_out:   "750"
+  current_cal_val2_in:  "6.8"
+  current_cal_val2_out: "3.5"
+  voltage_cal_val2_in:  "132.7"
+  voltage_cal_val2_out: "119.1"
+
+  # GPIO definitions
+  sub_red_led_pin:  GPIO1
+  sub_button_pin:   GPIO3
+  sub_pm_cf_pin:    GPIO4
+  sub_pm_cf1_pin:   GPIO5
+  sub_blue_led_pin: GPIO12
+  sub_relay_pin:    GPIO13
+  sub_pm_sel_pin:   GPIO14
+
+  # debounce specifications
+  sub_default_debounce: "20"
+  sub_min_debounce:     "10"
+
+
+logger:
+  baud_rate: 0

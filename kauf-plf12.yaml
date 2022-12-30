@@ -1,0 +1,3 @@
+packages:
+  Kauf.PLF12-Base: github://KaufHA/PLF12/kauf-plf12-base.yaml
+  Kauf.PLF10: github://KaufHA/PLF10/kauf-plug.yaml
