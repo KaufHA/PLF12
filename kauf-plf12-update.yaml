@@ -1,0 +1,6 @@
+packages:
+  kauf.plf12-base:   !include kauf-plf12-base.yaml
+  kauf.plf10-update: !include ../PLF10/kauf-plug-update.yaml # github://KaufHA/PLF10/kauf-plug-update.yaml
+
+dashboard_import:
+  package_import_url: github://KaufHA/PLF12/kauf-plf12.yaml
