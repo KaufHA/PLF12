@@ -125,6 +125,17 @@ Holding the plug's button for 30 seconds will clear any programmed Wi-Fi credent
 
 General troubleshooting ideas applicable to all products are located in the [Common repo's readme](https://github.com/KaufHA/common/blob/main/README.md#troubleshooting).
 
+## Recommended Tasmota Template
+
+***Important Note:***  Do not have anything plugged into the plug when first flashing Tasmota.  The default Tasmota template uses the relay for an indicator LED, so the relay will turn on and off every second or so until you change the template or get the plug connected to Wi-Fi.
+
+```
+{"NAME":"Kauf Plug","GPIO":[0,320,0,32,2720,2656,0,0,321,224,2624,0,0,0],"FLAG":0,"BASE":18}
+```
+
+This page explains how to use the template if you need help: https://templates.blakadder.com/howto.html
+
+
 ## Links
 - [Purchase plugs on Amazon](https://www.amazon.com/dp/B0BJLGNPPX)
 - [KAUF YouTube Channel](https://www.youtube.com/channel/UCjgziIA-lXmcqcMIm8HDnYg)
