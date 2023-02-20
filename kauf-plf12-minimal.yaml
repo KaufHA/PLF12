@@ -86,7 +86,7 @@ ota:              # https://esphome.io/components/ota.html
 # red led, blink when not connected to wifi or Home Assistant
 status_led:
     pin:
-      number: GPIO0
+      number: sub_red_led_pin
       inverted: true
 
 
@@ -99,7 +99,7 @@ binary_sensor:
     id: button
     name: $friendly_name Button
     pin:
-      number: GPIO13
+      number: sub_button_pin
       mode:
         input: true
         pullup: true
@@ -121,14 +121,14 @@ switch:
   - platform: gpio
     id: blue_led
     pin:
-      number: GPIO2
+      number: sub_blue_led_pin
       inverted: true
 
     # relay output
   - platform: gpio
     id: relay
     name: $friendly_name
-    pin: GPIO4
+    pin: sub_relay_pin
 
     # automatically make blue led equal relay state
     on_turn_on:
