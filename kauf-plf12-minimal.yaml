@@ -123,12 +123,14 @@ switch:
     pin:
       number: $sub_blue_led_pin
       inverted: true
+    restore_mode: RESTORE_DEFAULT_ON
 
     # relay output
   - platform: gpio
     id: relay
     name: $friendly_name
     pin: $sub_relay_pin
+    restore_mode: RESTORE_DEFAULT_ON
 
     # automatically make blue led equal relay state
     on_turn_on:
