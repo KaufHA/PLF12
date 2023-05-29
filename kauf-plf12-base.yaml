@@ -27,7 +27,7 @@ substitutions:
   sub_min_debounce:     "10"
 
   sub_default_scale_power: "87"
-  sub_default_scale_current: "152"
+  sub_default_scale_current: "162"
   sub_default_scale_voltage: "85"
 
 
