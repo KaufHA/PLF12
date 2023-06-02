@@ -16,18 +16,7 @@ packages:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-  
-##########################
-## Re: Binary Size Error
-##   ESPHome now adds API encryption by default.  When the plug firmware is compiled, API encrytion
-##   makes the binary file too big to OTA update.  We recommend that you remove API encryption
-##   by commenting out or removing the following lines to allow easy OTA.  Otherwise, you can keep API
-##   encryption by changing the package line above to kauf-plf12-minimal.yaml as an intermediate
-##   firmware before immediately switching back to kauf-plf12.yaml.
-##########################
-# api:
-#   encryption:
-#     key: ...
+
 ```
 
 ## Repo Contents
@@ -137,7 +126,9 @@ Holding the plug's button for 30 seconds will clear any programmed Wi-Fi credent
 
 ### Binary Size Error
 
-ESPHome began adding API encryption by default, which makes the plug binary files too big to OTA update.  If you are getting the message `ERROR Error binary size: Error: ESP does not have enough space to store OTA file. Please try flashing a minimal firmware (remove everything except ota)`, then you need to remove API encryption by commenting it out or deleting the following lines:
+ESPHome began adding API encryption by default, which may make the plug binary files too big to OTA update.  kauf-plug.yaml v2.03 removed the light entities and replaced them with switch entities to toggle lights and number entities to control brightness.  This change reduced the binary size and OTA should now work with API encryption without a problem.
+
+If you are still getting the message `ERROR Error binary size: Error: ESP does not have enough space to store OTA file.`, we recommend that you remove API encryption by commenting out or deleting the following lines:
 
 ```
 # api:
