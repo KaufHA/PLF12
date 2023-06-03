@@ -30,6 +30,8 @@ substitutions:
   sub_default_scale_current: "162"
   sub_default_scale_voltage: "85"
 
+  sub_early_publish_absolute: "4.05"  # for PLF12, 1w is approximately 1.35.  4.05 is approximately 3w.
+
 
 logger:
   baud_rate: 0
