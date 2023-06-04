@@ -23,21 +23,30 @@ wifi:
 
 This repo contains files for the PLF12 Power Monitoring Smart Plug.
 
+***kauf-plf12-base.yaml*** - includes substitution changes required to modify the PLF10 yaml files for use with the PLF12 plug.
+
 ***kauf-plf12.yaml*** - The yaml file recommended to import a plug into your ESPHome dashboard and keep all custom KAUF functionality.  This is the yaml file incorporated automatically when the dashboard import feature is used.
 
-***kauf-plug-lite.yaml*** - A yaml file without any Kauf custom components but otherwise keeping as much functionality from kauf-plf12.yaml as possible.
+***kauf-plf12-lite.yaml*** - A yaml file without any Kauf custom components but otherwise keeping as much functionality from kauf-plf12.yaml as possible.
 
-***kauf-plug-minimal.yaml*** - A yaml file to import a plug into your ESPHome dashboard with only basic power monitoring smart plug functionality using stock ESPHome.
+***kauf-plf12-minimal.yaml*** - A yaml file to import a plug into your ESPHome dashboard with only basic power monitoring smart plug functionality using stock ESPHome.
 
-***kauf-plug-update.yaml*** - The yaml file to build the update bin file.  Generally not useful to end users.
+***kauf-plf12-update.yaml*** - The yaml file to build the update bin file.  Generally not useful to end users.
 
-***kauf-plug-factory.yaml*** - The yaml file to build the factory bin file.  Generally not useful to end users.
+***kauf-plf12-factory.yaml*** - The yaml file to build the factory bin file.  Generally not useful to end users.
 
+## Control Entities
+
+***Kauf Plug*** switch entity - The main switch that controls the plug's relay.  It will be named just Kauf Plug, or whatever you set the friendly_name substitution to in yaml.  All other entities will be prefixed with the name of this entity plus whatever is indicated below for the particular other entity.
+
+***Blue LED*** switch entity - Controls the blue LED on and off.
+
+***Red LED*** switch entity - Controls the red LED on and off.
 
 ## Configuration Entities
 If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome dashboard, the following configuration entities are automatically created.  Entities listed as disabled by default can be enabled in Home Assistant, or simply modified through the web interface by clicking "Visit Device" in Home Assistant or typing the plug's IP address into a web browser.  Adding the substitution `disable_entities: "false"` in your yaml file will cause all entities to be automatically enabled in Home Assistant.
 
-***Blue LED*** light entity - This is in the configuration section because the main intent is to control the blue LED's brightness while the plug itself automatically turns the light on and off.  However, you can also directly control the blue LED in automations or manually using this light entity.
+***Blue LED Brightness*** number entity - sets the brightness of the blue LED when on.
 
 ***Blue LED Config*** select entity - Configures the behavior of the blue LED.  Has the following options.  Defaults to *Power Status*.
 - *Power Status*: LED follows relay state.
@@ -47,7 +56,7 @@ If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome d
 - *Error and Power*: The LED will follow the relay state, but then also blink when an error is detected.
 - *Error and Invert Power*: The LED will follow the inverse of the relay state, but then also blink when an error is detected.
 
-***Red LED*** light entity - Same as the Blue LED light entity, but for the Red LED.
+***Red LED Brightness*** number entity - sets the brightness of the red LED when on.
 
 ***Red LED Config*** select entity - Same as the Blue LED select entity, but for the Red LED.  Defaults to *Error Status*.
 
@@ -62,7 +71,7 @@ If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome d
 
 ***Monitoring Update Interval*** select entity - Disabled by default.  Defines the update frequency for the power monitoring sensor entities.  Defaults to *10s*.  Hard coded options are *2s*, *5s*, *10s*, *30s*, and *60s*.  The *YAML Configured* option uses the value defined by the `sub_update_interval:` substitution in YAML.  For the precompiled binaries, this is set to 20s to provide an additional option.  Changing this value will cause the plug to automatically reboot to effect the change.
 
-***Debounce Time*** number entity - Disabled by default.  Defines an amount of time that the button needs to be held before toggling the relay.  Defaults to 20ms and has a minimum value of 10ms.
+***Debounce Time*** number entity - Disabled by default.  Defines an amount of time that the button needs to be held before toggling the relay.  Defaults to 20ms and has a minimum value of 10ms.  Changing this value will cause the plug to automatically reboot to effect the change.
 
 ***No Hass*** switch entity - Disabled by default.  Turn this switch on if not using Home Assistant with the plug.  Prevents the plug from flashing an error due to no API connection and rebooting every 15 minutes.
 
@@ -87,7 +96,7 @@ If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome d
 ***Uptime*** number entity - Gives the plug's uptime in seconds.
 
 
-## Advanced Settings (via YAML Substitutions)
+## Advanced Settings (set via YAML substitutions)
 When using kauf-plf12.yaml as a package in the ESPHome dashboard, you can configure the following aspects by adding substitutions.  The substitutions section of kauf-plf12.yaml has comments with more explanation as well.  Adding one of these in your local yaml will overwrite the corresponding value in kauf-plf12.yaml.
 
 ***name*** - Defines the plug's name in the ESPHome dashboard, the device name in Home Assistant, mDNS URL, and other various aspects.  The name should use only lower-case letters and dashes.  Do not use spaces or underlines.
@@ -108,12 +117,32 @@ When using kauf-plf12.yaml as a package in the ESPHome dashboard, you can config
 
 ***default_button_config*** - defines the default option for the button config select entity.
 
-***power monitoring calibration*** - all of the values used to calibrate the power monitoring calibration can be overwritten using substitutions to make the calibration more accurate.
+***sub_default_scale_\**** - defines default values for the power, current, and voltage scaling.
+
+***power monitoring calibration*** - all of the values used to calibrate the power monitoring calibration can be overwritten using substitutions to make the calibration more accurate (current_resistor_val, voltage_divider_val, sub_hlw_model, power_cal_\*, current_cal_\*, voltage_cal_\*).
 
 ***power monitoring update interval*** (`sub_update_interval:`) - Defines the time delay between updates of the power monitoring sensors.  The power monitoring update interval select entity needs to be set to *YAML Configured* for this substitution to take effect.
 
 ***sub_pm_initial_option*** - Defines the default option for the power monitoring update interval select entity.
 
+***sub_early_publish_percent*** - Defines a percentage change, relative to the current power output, at which time the plug will ignore the configured update interval and immediately report a new power output to the sensor.  Defaults to 25%.
+
+***sub_early_publish_percent_min_power*** - Defines a minimum power, under which the early publish percent configuration will be ignored.  The plug will never publish early based on percentage change if under this value.  Defaults to 0.5W.
+
+***sub_early_publish_absolute*** - Defines an absolute power change after which the plug will ignore the configured update interval and update immediately.  The unit for this is **NOT WATTS** but rather a raw value used under the hood for processing.  To figure out what value you need here, you can enable verbose logging and the HLW component will output the needed raw value.  For the PLF12 plug, 1W translates to 1.35.  Defaults to 4.05, which is an approximately 3w change.
+
+## Additional Automations (set via YAML substitutions)
+The following substitutions can be set to the name of a script to execute automatically in certain circumstances.  You need to write the script in your yaml file.
+
+***sub_on_press*** - executes right when button is initially pressed
+
+***sub_on_release*** - executes right when button is released
+
+***sub_on_hold_30s*** - executes right when button has been held for 30s, while button is still being held
+
+***sub_on_turn_on*** - executes right when relay turns on
+
+***sub_on_turn_off*** - executes right when relay turns off
 
 ## Factory Reset
 Going to the plug's URL in a web browser and adding /reset will completely wipe all settings from flash memory.  Note that this will wipe the plug's memory of whether the relay was on or off, and therefore the plug may turn off.
@@ -126,7 +155,7 @@ Holding the plug's button for 30 seconds will clear any programmed Wi-Fi credent
 
 ### Binary Size Error
 
-ESPHome began adding API encryption by default, which may make the plug binary files too big to OTA update.  kauf-plug.yaml v2.03 removed the light entities and replaced them with switch entities to toggle lights and number entities to control brightness.  This change reduced the binary size and OTA should now work with API encryption without a problem.
+ESPHome began adding API encryption by default, which may make the plug binary files too big to OTA update.  kauf-plf12.yaml v2.03 removed the light entities and replaced them with switch entities to toggle lights and number entities to control brightness.  This change reduced the binary size and OTA should now work with API encryption without a problem.
 
 If you are still getting the message `ERROR Error binary size: Error: ESP does not have enough space to store OTA file.`, we recommend that you remove API encryption by commenting out or deleting the following lines:
 
