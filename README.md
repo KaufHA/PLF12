@@ -71,6 +71,8 @@ If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome d
 
 ***Monitoring Update Interval*** select entity - Disabled by default.  Defines the update frequency for the power monitoring sensor entities.  Defaults to *10s*.  Hard coded options are *2s*, *5s*, *10s*, *30s*, and *60s*.  The *YAML Configured* option uses the value defined by the `sub_update_interval:` substitution in YAML.  For the precompiled binaries, this is set to 20s to provide an additional option.  Changing this value will cause the plug to automatically reboot to effect the change.
 
+***Early Publish*** switch entity - controls whether the plug will report power usage before the configured update interval if a change greater than configured thresholds is detected.  Defaults to on.  Default thresholds are +/- 3w or 25%.
+
 ***Debounce Time*** number entity - Disabled by default.  Defines an amount of time that the button needs to be held before toggling the relay.  Defaults to 20ms and has a minimum value of 10ms.  Changing this value will cause the plug to automatically reboot to effect the change.
 
 ***No Hass*** switch entity - Disabled by default.  Turn this switch on if not using Home Assistant with the plug.  Prevents the plug from flashing an error due to no API connection and rebooting every 15 minutes.
@@ -130,6 +132,14 @@ When using kauf-plf12.yaml as a package in the ESPHome dashboard, you can config
 ***sub_early_publish_percent_min_power*** - Defines a minimum power, under which the early publish percent configuration will be ignored.  The plug will never publish early based on percentage change if under this value.  Defaults to 0.5W.
 
 ***sub_early_publish_absolute*** - Defines an absolute power change after which the plug will ignore the configured update interval and update immediately.  The unit for this is **NOT WATTS** but rather a raw value used under the hood for processing.  To figure out what value you need here, you can enable verbose logging and the HLW component will output the needed raw value.  For the PLF12 plug, 1W translates to 1.35.  Defaults to 4.05, which is an approximately 3w change.
+
+***sub_hlw_timeout*** - sets an amount of time to wait for a signal from the power monitoring chip before assuming the power being used is 0w.  Defaults to 3s.
+
+### Wi-Fi networks
+
+Multiple Wi-Fi networks can now be configured with the [`networks:`](https://esphome.io/components/wifi.html#connecting-to-multiple-networks) key under `wifi:`.  By default, the configured `networks:` will be added in addition to the default initial_ap network.  If you want to only include the `networks:` you added in your local yaml without initial_ap as well, then you need to set `only_networks: true` under `wifi:`.  If you set your SSID/password without the `networks:` key, then that will automatically overwrite the default initial_ap network.
+
+**Note:** With multiple networks configured, you will need to disable fast_connect, which is on by default, with `fast_connect: false`.
 
 ## Additional Automations (set via YAML substitutions)
 The following substitutions can be set to the name of a script to execute automatically in certain circumstances.  You need to write the script in your yaml file.
