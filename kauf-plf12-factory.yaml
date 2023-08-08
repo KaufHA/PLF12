@@ -1,6 +1,108 @@
-packages:
-  kauf.plf12-base:    !include kauf-plf12-base.yaml
-  kauf.plf10-factory: !include ../PLF10/kauf-plug-factory.yaml
+substitutions:
+  project_ver_let: "f"
 
-dashboard_import:
-  package_import_url: github://KaufHA/PLF12/kauf-plf12.yaml
+  sub_update_interval: 2s
+  sub_pm_initial_option: YAML Configured ($sub_update_interval)
+
+
+packages:
+  kauf_plug_update: !include kauf-plf12-update.yaml
+
+
+esphome:
+  on_boot:
+    then:
+      - script.execute: script_factory_test
+
+
+script:
+  - id: script_factory_test
+    then:
+      # little sequence so factory can confirm firwmare is working.
+      - if:
+          condition:
+            lambda: 'return id(first_boot);'
+          then:
+
+            # get AP going ASAP
+            - lambda: 'wifi_wificomponent->set_ap_timeout(1);'
+
+            # reset scaling factors to 100
+            - number.set:
+                id: scale_power
+                value: 100
+            - number.set:
+                id: scale_current
+                value: 100
+            - number.set:
+                id: scale_voltage
+                value: 100
+
+            # turn on relay
+            - switch.turn_on: relay
+            - delay: 1s
+            - switch.turn_off: blue_led
+
+            - delay: 12s
+
+            # ensure all 3 values are reported
+            - wait_until:
+                lambda: return(!std::isnan(id(wattage).state) && !std::isnan(id(current).state) && !std::isnan(id(voltage).state));
+
+            # set scaling factors to expected test load.
+            # required ranges helps prevent calibration without proper test load.
+            - lambda: |-
+                uint32_t num_ok = 0;
+
+                if ( (id(wattage).state > 10) && (id(wattage).state < 100) ) {
+                  auto call = id(scale_power).make_call();
+                  call.set_value(ceil((10.0f*100.0f*26.800f) / id(wattage).state) / 10.0f);
+                  call.perform();
+                  num_ok++;
+                }
+                if ( (id(current).state > 0.01) && (id(current).state < 5.0) ) {
+                  auto call = id(scale_current).make_call();
+                  call.set_value(ceil((10.0f*100.0f*0.226f) / id(current).state) / 10.0f);
+                  call.perform();
+                  num_ok++;
+                }
+                if ( (id(voltage).state > 20) && (id(voltage).state < 250) ) {
+                  auto call = id(scale_voltage).make_call();
+                  call.set_value(ceil((10.0f*100.0f*120.0f) / id(voltage).state) / 10.0f);
+                  call.perform();
+                  num_ok++;
+                }
+
+                //test passed, clear first_boot variable so we don't run this again
+                id(first_boot) = false;
+
+                // finish factory test with results argument
+                id(finish_factory_test)->execute(num_ok);
+
+  - id: finish_factory_test
+    parameters:
+      num_ok: int
+    then:
+
+      # blink led to indicate finish test until button is pressed then stay on
+      - while:
+          condition:
+            binary_sensor.is_off: button_in
+          then:
+            - lambda: |-
+                if ( num_ok == 3 ) { id(blue_led).toggle(); }
+                else               { id(red_led).toggle();  }
+            - delay: 100ms
+
+      # set power monitoring mode to lower frequency default
+      - select.set:
+          id: select_monitor_interval
+          option: "10s"
+      - lambda: global_preferences->sync();
+
+
+globals:
+  - id: first_boot          # used to run test routine at factory
+    type: bool
+    restore_value: yes
+    initial_value: 'true'
