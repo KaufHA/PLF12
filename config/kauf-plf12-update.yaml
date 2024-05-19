@@ -1,5 +1,5 @@
 packages:
-  kauf.plf10-update: !include ../PLF10/kauf-plug-update.yaml
+  kauf.plf10-update: !include ../../PLF10/config/kauf-plug-update.yaml
   kauf.plf12-base:   !include kauf-plf12-base.yaml
 
 dashboard_import:
