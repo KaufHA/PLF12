@@ -48,8 +48,9 @@ esphome:
   # https://esphome.io/components/esphome.html#esphome-creators-project
   project:
     name: "Kauf.PLF12"
-    version: "2.02(m)"
+    version: "2.068(m)"
 
+  min_version: 2024.6.0
 
 # https://esphome.io/components/esp8266.html
 esp8266:
@@ -80,7 +81,9 @@ web_server:       # https://esphome.io/components/web_server.html
 logger:           # https://esphome.io/components/logger.html
 api:              # https://esphome.io/components/api.html
 ota:              # https://esphome.io/components/ota.html
+  platform: esphome
 
+safe_mode:
 
 # https://esphome.io/components/status_led.html
 # red led, blink when not connected to wifi or Home Assistant
