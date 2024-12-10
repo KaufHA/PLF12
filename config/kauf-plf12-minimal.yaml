@@ -99,7 +99,7 @@ binary_sensor:
     # button input toggles relay and thereby blue led
     # https://esphome.io/components/binary_sensor/gpio.html
   - platform: gpio
-    id: button
+    id: button_in
     name: $friendly_name Button
     pin:
       number: $sub_button_pin
