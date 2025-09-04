@@ -25,7 +25,9 @@ script:
           then:
 
             # get AP going ASAP
-            - lambda: 'wifi_wificomponent->set_ap_timeout(1);'
+            - lambda: 'wifi_wificomponent_id->set_ap_timeout(1);'
+
+            # configure LEDs to both follow relay only
 
             # reset scaling factors to 100
             - number.set:
