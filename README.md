@@ -72,7 +72,7 @@ If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome d
 
 ## Configuration Entities - Precompiled Binaries Only
 
-The precompiled update files add the following configuration entities that were removed in the yaml package to save space. Those using the yaml packages can configure all of these aspects using [substitutions](https://github.com/KaufHA/PLF10/blob/main/README.md#replacements-for-configuration-entities-that-only-exist-in-precompiled-binaries).  Alternatively, the yaml package can be changed to `github://KaufHA/PLF10/config/kauf-plug-plus.yaml` to get all of the config entities back.
+The precompiled update files add the following configuration entities that were removed in the yaml package to save space. Those using the yaml packages can configure all of these aspects using [substitutions](https://github.com/KaufHA/PLF12/blob/main/README.md#replacements-for-configuration-entities-that-only-exist-in-precompiled-binaries).  Alternatively, the yaml package can be changed to `github://KaufHA/PLF10/config/kauf-plug-plus.yaml` to get all of the config entities back.
 
 ***Debounce Time*** number entity - Disabled by default.  Defines an amount of time that the button needs to be held before toggling the relay.  Defaults to 100ms and has a minimum value of 50ms.  The PLF10's button needs at least a minimum of 40ms debounce, but the actual necessary value depends on the amount of EMI in the environment where the plug is being used.  Changing this value will cause the plug to automatically reboot to effect the change.
 
