@@ -62,20 +62,7 @@ If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome d
 
 ***Button Config*** select entity - Defines when the button toggles the relay.  To disable the button toggling the relay, select the *Don't Toggle* option.  Otherwise, you can select the relay to toggle either on press or on release of the button.  Toggle on release might be desired in order to have a different action performed when the button is held for a certain amount of time.  For instance, the precompiled binary defaults to toggling on release so that the toggle can be blocked in case the button is held for 30 seconds to reenable the Wi-Fi AP.
 
-***Boot State*** select entity - Defines the relay's behavior on boot.
-- *Restore Power Off State*: The relay will restore its state from the last time the plug was changed before power off or reboot.
-- *Invert Power Off State*: The relay will toggle every time it is reboot or powered off and back on.
-- *Always On*: The relay will always turn on when the plug boots.
-- *Always Off*: The relay will always remain off when the plug boots.
-- *YAML Configured*: The boot state is set using the `sub_restore_mode:` substitution to any valid value for a [GPIO switch's restore mode](https://esphome.io/components/switch/gpio.html?highlight=restore_mode#configuration-variables).
-
-***Monitoring Update Interval*** select entity - Disabled by default.  Defines the update frequency for the power monitoring sensor entities.  Defaults to *10s*.  Hard coded options are *2s*, *5s*, *10s*, *30s*, and *60s*.  The *YAML Configured* option uses the value defined by the `sub_update_interval:` substitution in YAML.  For the precompiled binaries, this is set to 20s to provide an additional option.  Changing this value will cause the plug to automatically reboot to effect the change.
-
 ***Early Publish*** switch entity - controls whether the plug will report power usage before the configured update interval if a change greater than configured thresholds is detected.  Defaults to on.  Default thresholds are +/- 3w or 25%.
-
-***Debounce Time*** number entity - Disabled by default.  Defines an amount of time that the button needs to be held before toggling the relay.  Defaults to 20ms and has a minimum value of 10ms.  Changing this value will cause the plug to automatically reboot to effect the change.
-
-***No Hass*** switch entity - Disabled by default.  Turn this switch on if not using Home Assistant with the plug.  Prevents the plug from flashing an error due to no API connection and rebooting every 15 minutes.
 
 ***Scale Current*** number entity - Disabled by default.  Scales the current sensor.  Can be used to calibrate the plug.
 
@@ -83,7 +70,24 @@ If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome d
 
 ***Scale Voltage*** number entity - Disabled by default.  Scales the voltage sensor.  Can be used to calibrate the plug.
 
+## Configuration Entities - Precompiled Binaries Only
+
+The precompiled update files add the following configuration entities that were removed in the yaml package to save space. Those using the yaml packages can configure all of these aspects using [substitutions](https://github.com/KaufHA/PLF10/blob/main/README.md#replacements-for-configuration-entities-that-only-exist-in-precompiled-binaries).  Alternatively, the yaml package can be changed to `github://KaufHA/PLF10/config/kauf-plug-plus.yaml` to get all of the config entities back.
+
+***Debounce Time*** number entity - Disabled by default.  Defines an amount of time that the button needs to be held before toggling the relay.  Defaults to 100ms and has a minimum value of 50ms.  The PLF10's button needs at least a minimum of 40ms debounce, but the actual necessary value depends on the amount of EMI in the environment where the plug is being used.  Changing this value will cause the plug to automatically reboot to effect the change.
+
 ***Use Threshold*** number entity - Disabled by default.  Sets a threshold for the *Device in Use* binary sensor.  The binary sensor turns on if the power detected by the plug exceeds the threshold.
+
+***Monitoring Update Interval*** select entity - Disabled by default.  Defines the update frequency for the power monitoring sensor entities.  Defaults to *10s*.  Hard coded options are *2s*, *5s*, *10s*, *30s*, and *60s*.  The *YAML Configured* option uses the value defined by the `sub_update_interval:` substitution in YAML.  For the precompiled binaries, this is set to 20s to provide an additional option.  Changing this value will cause the plug to automatically reboot to effect the change.
+
+***Boot State*** select entity - Defines the relay's behavior on boot.
+- *Restore Power Off State*: The relay will restore its state from the last time the plug was changed before power off or reboot.
+- *Invert Power Off State*: The relay will toggle every time it is reboot or powered off and back on.
+- *Always On*: The relay will always turn on when the plug boots.
+- *Always Off*: The relay will always remain off when the plug boots.
+- *YAML Configured*: The boot state is set using the `sub_restore_mode:` substitution to any valid value for an [ESPHome switch's restore mode]([https://esphome.io/components/switch/gpio.html?highlight=restore_mode#configuration-variables](https://esphome.io/components/switch/)).
+
+***No Hass*** switch entity - Disabled by default.  Turn this switch on if not using Home Assistant with the plug.  Prevents the plug from flashing an error due to no API connection and rebooting every 15 minutes.
 
 
 ## Diagnostic Entities
@@ -91,7 +95,7 @@ If using the precompiled binary or kauf-plf12.yaml as a package in the ESPHome d
 
 ***Restart Firmware*** button entity - Press this button to reboot the plug.
 
-***Button Press Duration*** sensor entity - Indicates the amount of time in milliseconds that the button was last pressed for.  Reads zero while the button is being pressed.
+***Button Press Duration*** sensor entity (Precompiled binary or *-plus.yaml only) - Indicates the amount of time in milliseconds that the button was last pressed for.  Reads zero while the button is being pressed.
 
 ***IP Address*** sensor entity - Gives the plug's IP address.
 
@@ -134,6 +138,21 @@ When using kauf-plf12.yaml as a package in the ESPHome dashboard, you can config
 ***sub_early_publish_absolute*** - Defines an absolute power change after which the plug will ignore the configured update interval and update immediately.  The unit for this is **NOT WATTS** but rather a raw value used under the hood for processing.  To figure out what value you need here, you can enable verbose logging and the HLW component will output the needed raw value.  For the PLF12 plug, 1W translates to 1.35.  Defaults to 4.05, which is an approximately 3w change.
 
 ***sub_hlw_timeout*** - sets an amount of time to wait for a signal from the power monitoring chip before assuming the power being used is 0w.  Defaults to 3s.
+
+### Replacements for Configuration Entities That Only Exist in Precompiled Binaries
+
+The following substitutions are used to configure aspects that have configuration entities in the precompiled binaries but removed in the yaml package to save space. Use the following substitutions instead of configuration entities.
+
+***sub_debounce*** - Requires an integer without units.  Defines the debounce time in milliseconds.
+
+***sub_threshold*** - Requires an integer without units.  Defines the threshold in Watts for the in_use binary sensor.
+
+***sub_update_interval*** - requires an integer with a time unit.  Defines the length of time between updating the power monitoring sensors.
+
+**sub_restore_mode*** - Requires one of the options for [ESPHome's switch restore_mode option](https://esphome.io/components/switch/).  Defines the relay's behavior at boot.
+
+***sub_reboot_timeout*** - Requires an integer with a time unit.  Defines the length of time after which the device will restart if not connected to Home Assistant.  Defaults to 0s, which disables the reboot.  ESPHome default is `15min`.
+
 
 ### Wi-Fi networks
 
