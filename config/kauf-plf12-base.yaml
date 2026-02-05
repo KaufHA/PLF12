@@ -35,3 +35,7 @@ substitutions:
 
 logger:
   baud_rate: 0
+
+
+web_server:
+  product: plf12

@@ -108,3 +108,7 @@ globals:
     type: bool
     restore_value: yes
     initial_value: 'true'
+
+
+web_server:
+  factory: true
