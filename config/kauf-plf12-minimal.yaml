@@ -82,6 +82,7 @@ logger:           # https://esphome.io/components/logger.html
 api:              # https://esphome.io/components/api.html
 ota:              # https://esphome.io/components/ota.html
   platform: esphome
+  id: kauf_esphome_ota
 
 safe_mode:
 
