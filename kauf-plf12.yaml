@@ -1,3 +1,5 @@
 packages:
-  Kauf.PLF10: github://KaufHA/PLF10/kauf-plug.yaml
-  Kauf.PLF12-Base: github://KaufHA/PLF12/config/kauf-plf12-base.yaml
+  Kauf.PLF12: github://KaufHA/kauf-plugs/packages/kauf-plf12-lite.yaml
+
+kauf_deprecations:
+  yaml_file: "__KAUF_PLF12_LEGACY_YAML__"
